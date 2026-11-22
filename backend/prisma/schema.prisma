@@ -1,0 +1,43 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+datasource db {
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
+  extensions = [vector]
+}
+
+model Repository {
+  id           String        @id @default(uuid())
+  name         String        @unique
+  owner        String
+  url          String
+  createdAt    DateTime      @default(now())
+  pullRequests PullRequest[]
+}
+
+model PullRequest {
+  id               String     @id @default(uuid())
+  githubDeliveryId String     @unique
+  repoId           String
+  repository       Repository @relation(fields: [repoId], references: [id], onDelete: Cascade)
+  prNumber         Int
+  title            String
+  status           String     @default("PENDING")
+  aiSummary        String?
+  createdAt        DateTime   @default(now())
+
+  @@index([repoId, prNumber])
+}
+
+model CodeChunk {
+  id        String                       @id @default(uuid())
+  repoName  String
+  filePath  String
+  content   String
+  embedding Unsupported("vector(1536)")?
+
+  @@index([repoName])
+}
