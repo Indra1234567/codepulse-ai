@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import { prisma } from './config/db';
 import webhookRoutes from './routes/webhook.routes';
 import { WebhookRequest } from './middleware/verifyGithubWebhook';
+import apiRoutes from './routes/api.routes';
 
 dotenv.config();
 
@@ -23,6 +24,7 @@ app.use(
 
 // Routes
 app.use('/api/webhooks', webhookRoutes);
+app.use('/api' , apiRoutes)
 
 app.get('/api/health', async (_req: Request, res: Response) => {
   try {
